@@ -1,0 +1,17 @@
+---
+description: Prisma schema, migrations, and Postgres access patterns
+globs:
+  - "prisma/**/*"
+  - "**/prisma.service.ts"
+  - "**/*prisma*.ts"
+alwaysApply: false
+---
+
+# Prisma + PostgreSQL
+
+- **Schema**: `prisma/schema.prisma` is the source of truth; use `@@map`/`@map` for DB naming if API names differ.
+- **Migrations**: add with `pnpm exec prisma migrate dev` or `pnpm run prisma:migrate` (or CI-safe `pnpm exec prisma migrate deploy` in prod); never rewrite old migration files.
+- **Queries**: use Prisma Client API; raw queries only when necessary and typed/`$queryRaw` with care.
+- **Transactions**: `prisma.$transaction` for multi-step atomic work; keep business intent in services.
+- **IDs**: prefer `cuid()` or `uuid()` defaults as per project choice; document in schema comments if non-obvious.
+- **Application metadata**: store in explicit models (e.g. `AppMetadata`, key-value, or domain tables) — agents should find them in the schema, not scattered in env or files.

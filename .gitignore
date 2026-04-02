@@ -1,0 +1,14 @@
+.history
+node_modules
+package-lock.json
+yarn.lock
+dist
+.env
+.env.*.local
+*.log
+.DS_Store
+coverage
+.idea
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json

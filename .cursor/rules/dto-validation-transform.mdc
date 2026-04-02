@@ -1,0 +1,26 @@
+---
+description: DTOs, class-validator, class-transformer, ValidationPipe
+globs:
+  - "**/*.dto.ts"
+  - "**/dto/**/*.ts"
+  - "**/main.ts"
+alwaysApply: false
+---
+
+# Validation and transformation
+
+- Every **body/query/param** class used at the edge should use **class-validator** decorators; use **class-transformer** (`@Type`, `@Expose`, `@Exclude`, `@Transform`) for coercion and safe serialization.
+- Align with app bootstrap:
+
+```typescript
+new ValidationPipe({
+  whitelist: true,
+  forbidNonWhitelisted: true,
+  transform: true,
+  transformOptions: { enableImplicitConversion: true },
+});
+```
+
+- Prefer **dedicated DTOs** per endpoint or use case over one mega-DTO with optional everything.
+- **Do not** use `any` on DTO properties; use unions, enums, or branded types when needed.
+- For nested objects/arrays, use `@ValidateNested()` + `@Type(() => ChildDto)`.

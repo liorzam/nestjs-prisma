@@ -1,0 +1,13 @@
+---
+description: NestJS + Prisma + validation stack — always read before structural edits
+alwaysApply: true
+---
+
+# NestJS agent defaults
+
+- Prefer **feature modules** under `src/modules/<domain>/` with clear `*.module.ts` boundaries.
+- **Controllers** stay thin: validate via DTOs + pipes; call services; return DTOs or plain objects — no business rules.
+- **Services** own orchestration and domain rules; inject `PrismaService` (or repositories), not `PrismaClient` in controllers.
+- **Single Prisma boundary**: one module/service wraps the client; enable shutdown hooks in `main.ts` if using Nest lifecycle.
+- **Metadata in Postgres**: model it in `schema.prisma`; use migrations for schema changes; avoid duplicating state outside the DB without a documented reason.
+- **Circular deps**: resolve with forward refs sparingly; prefer extracting shared interfaces to `src/common` or a small shared module.
