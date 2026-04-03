@@ -4,16 +4,16 @@ import type { NestExpressApplication } from '@nestjs/platform-express'
 import { Logger } from 'nestjs-pino'
 
 import { AppModule } from './app.module'
+import { ConfigEnvService } from './config/config-env.service'
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true })
   app.useLogger(app.get(Logger))
 
-  const trusted = process.env.TRUSTED_PROXIES?.split(',')
-    .map((s) => s.trim())
-    .filter(Boolean)
+  const config = app.get(ConfigEnvService)
+  const trusted = config.trustedProxies
   if (trusted?.length) {
-    const proxy = trusted.length === 1 ? (trusted[0] as string) : trusted
+    const proxy = trusted.length === 1 ? trusted[0] : trusted
     app.set('trust proxy', proxy)
   }
 
@@ -26,8 +26,7 @@ async function bootstrap(): Promise<void> {
     }),
   )
 
-  const port = process.env.PORT ?? 3000
-  await app.listen(port)
+  await app.listen(config.port)
 }
 
 bootstrap().catch((err: unknown) => {
