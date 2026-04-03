@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
 import { Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ConfigModule } from '@nestjs/config'
 import { APP_FILTER, APP_GUARD } from '@nestjs/core'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import type Redis from 'ioredis'
@@ -11,6 +11,8 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter'
 import configuration from './config/configuration'
+import { ConfigEnvModule } from './config/config-env.module'
+import { ConfigEnvService } from './config/config-env.service'
 import { envValidationSchema } from './config/env.validation'
 import { PrismaModule } from './infrastructure/prisma/prisma.module'
 import { REDIS_CLIENT } from './infrastructure/redis/redis.constants'
@@ -25,11 +27,12 @@ import { HealthModule } from './modules/health/health.module'
       validationSchema: envValidationSchema,
       validationOptions: { abortEarly: false },
     }),
+    ConfigEnvModule,
     LoggerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const isProd = config.get<string>('NODE_ENV') === 'production'
+      imports: [ConfigEnvModule],
+      inject: [ConfigEnvService],
+      useFactory: (config: ConfigEnvService) => {
+        const isProd = config.nodeEnv === 'production'
         return {
           pinoHttp: {
             level: isProd ? 'info' : 'debug',
