@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "nestjs-dependency-injection": {
+      "source": "thebushidocollective/han",
+      "sourceType": "github",
+      "computedHash": "7678e5df9fa6bc0209aa9c311f6425af8e711de86c61baf3d6a3fab1f9472d06"
+    },
+    "nestjs-testing-expert": {
+      "source": "shipshitdev/library",
+      "sourceType": "github",
+      "computedHash": "c708d4305c3a30e3640499d09dec5b7f0cf772c2b3a53d3ff9945cbde4e4cfda"
+    }
+  }
+}

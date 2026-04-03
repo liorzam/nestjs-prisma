@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type Redis from 'ioredis'
-// biome-ignore lint/style/useImportType: PrismaService must exist at runtime for Nest DI metadata
 import { PrismaService } from '@/infrastructure/prisma/prisma.service'
 import { REDIS_CLIENT } from '@/infrastructure/redis/redis.constants'
 import type { HealthDependencyCheckDto, HealthResponseDto } from './dto/health-response.dto'

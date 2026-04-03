@@ -17,6 +17,7 @@ import { envValidationSchema } from './config/env.validation'
 import { PrismaModule } from './infrastructure/prisma/prisma.module'
 import { REDIS_CLIENT } from './infrastructure/redis/redis.constants'
 import { RedisModule } from './infrastructure/redis/redis.module'
+import { AppMetadataModule } from './modules/app-metadata/app-metadata.module'
 import { HealthModule } from './modules/health/health.module'
 
 @Module({
@@ -70,6 +71,7 @@ import { HealthModule } from './modules/health/health.module'
     }),
     PrismaModule,
     HealthModule,
+    AppMetadataModule,
   ],
   controllers: [AppController],
   providers: [

@@ -2,7 +2,6 @@ import { Controller, Get, HttpStatus, Res } from '@nestjs/common'
 import { SkipThrottle } from '@nestjs/throttler'
 import type { Response } from 'express'
 import type { HealthResponseDto } from './dto/health-response.dto'
-// biome-ignore lint/style/useImportType: HealthService must exist at runtime for Nest DI metadata
 import { HealthService } from './health.service'
 
 /**
