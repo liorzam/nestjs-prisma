@@ -2,6 +2,7 @@ import { Controller, Get, HttpStatus, Res } from '@nestjs/common'
 import { SkipThrottle } from '@nestjs/throttler'
 import type { Response } from 'express'
 import type { HealthResponseDto } from './dto/health-response.dto'
+// biome-ignore lint/style/useImportType: HealthService must exist at runtime for Nest DI metadata
 import { HealthService } from './health.service'
 
 /**
@@ -15,9 +16,7 @@ export class HealthController {
   constructor(private readonly health: HealthService) {}
 
   @Get()
-  async getHealth(
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<HealthResponseDto> {
+  async getHealth(@Res({ passthrough: true }) res: Response): Promise<HealthResponseDto> {
     const body = await this.health.getHealth()
     if (body.status !== 'ok') {
       res.status(HttpStatus.SERVICE_UNAVAILABLE)

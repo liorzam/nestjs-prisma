@@ -1,9 +1,8 @@
+import type { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
-
 import { HealthController } from './health.controller'
 import { HealthService } from './health.service'
-import type { INestApplication } from '@nestjs/common'
 
 describe('HealthController', () => {
   let app: INestApplication
