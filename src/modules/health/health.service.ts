@@ -1,11 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type Redis from 'ioredis'
-import { PrismaService } from '../../infrastructure/prisma/prisma.service'
-import { REDIS_CLIENT } from '../../infrastructure/redis/redis.constants'
-import type {
-  HealthDependencyCheckDto,
-  HealthResponseDto,
-} from './dto/health-response.dto'
+// biome-ignore lint/style/useImportType: PrismaService must exist at runtime for Nest DI metadata
+import { PrismaService } from '@/infrastructure/prisma/prisma.service'
+import { REDIS_CLIENT } from '@/infrastructure/redis/redis.constants'
+import type { HealthDependencyCheckDto, HealthResponseDto } from './dto/health-response.dto'
 
 @Injectable()
 export class HealthService {
@@ -22,8 +20,7 @@ export class HealthService {
     const database = this.mergeSettledCheck(dbSettled)
     const redisStatus = this.mergeSettledCheck(redisSettled)
 
-    const upCount = [database, redisStatus].filter((c) => c.status === 'up')
-      .length
+    const upCount = [database, redisStatus].filter((c) => c.status === 'up').length
     const overall: HealthResponseDto['status'] =
       upCount === 2 ? 'ok' : upCount === 0 ? 'unhealthy' : 'degraded'
 
