@@ -13,8 +13,8 @@ describe('HealthController', () => {
     timestamp: '2026-04-03T12:00:00.000Z',
     checks: {
       database: { status: 'up' as const, latencyMs: 2 },
-      redis: { status: 'up' as const, latencyMs: 1 },
-    },
+      redis: { status: 'up' as const, latencyMs: 1 } as Record<string, unknown>,
+    } as Record<string, unknown>,
   }
 
   beforeEach(async () => {

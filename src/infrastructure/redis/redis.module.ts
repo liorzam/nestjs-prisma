@@ -1,10 +1,14 @@
-import { Global, Module } from '@nestjs/common'
+import { Global, Module, OnModuleInit } from '@nestjs/common'
 import Redis from 'ioredis'
-import { ConfigEnvService } from '../../config/config-env.service'
+import { ConfigEnvService } from '@/config/config-env.service'
+import { HealthModule } from '@/modules/health/health.module'
+import { HealthCheckRegistry } from '@/modules/health/services/health-check-registry'
+import { RedisHealthCheckProvider } from './redis-health-check.provider'
 import { REDIS_CLIENT } from './redis.constants'
 
 @Global()
 @Module({
+  imports: [HealthModule],
   providers: [
     {
       provide: REDIS_CLIENT,
@@ -15,7 +19,17 @@ import { REDIS_CLIENT } from './redis.constants'
       },
       inject: [ConfigEnvService],
     },
+    RedisHealthCheckProvider,
   ],
   exports: [REDIS_CLIENT],
 })
-export class RedisModule {}
+export class RedisModule implements OnModuleInit {
+  constructor(
+    private readonly registry: HealthCheckRegistry,
+    private readonly redisHealthCheck: RedisHealthCheckProvider,
+  ) {}
+
+  onModuleInit(): void {
+    this.registry.register(this.redisHealthCheck)
+  }
+}

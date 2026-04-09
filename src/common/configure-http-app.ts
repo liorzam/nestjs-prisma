@@ -1,8 +1,8 @@
-import { ValidationPipe } from '@nestjs/common'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import helmet from 'helmet'
-import { Logger } from 'nestjs-pino'
+import { Logger, LoggerErrorInterceptor } from 'nestjs-pino'
 
+import { initPipes } from '@/utils/app.utils'
 import { ConfigEnvService } from '../config/config-env.service'
 
 /** Passed to `helmet()` in one place so production and e2e stay aligned. */
@@ -17,9 +17,12 @@ export const appHelmetOptions = {
  */
 export function configureHttpApp(app: NestExpressApplication): void {
   app.useLogger(app.get(Logger))
+  app.useGlobalInterceptors(new LoggerErrorInterceptor())
 
   const config = app.get(ConfigEnvService)
+
   const trusted = config.trustedProxies
+
   if (trusted?.length) {
     const proxy = trusted.length === 1 ? trusted[0] : trusted
     app.set('trust proxy', proxy)
@@ -27,12 +30,5 @@ export function configureHttpApp(app: NestExpressApplication): void {
 
   app.use(helmet(appHelmetOptions))
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: false,
-      transform: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  )
+  initPipes(app)
 }

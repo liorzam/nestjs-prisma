@@ -6,25 +6,29 @@ _Update this file when modules or integrations change so agents have a single ch
 
 | From | To | Notes |
 |------|----|-------|
+| `AppModule` | `AppNestConfigModule` | Thin wrapper; global `@nestjs/config` bootstrap + Joi validation |
+| `AppNestConfigModule` | `ConfigModule` (`@nestjs/config`) | `forRoot` + re-export; `load` + `validationSchema` |
 | `AppModule` | `ConfigEnvModule` | Global; provides `ConfigEnvService` |
-| `AppModule` | `LoggerModule` (nestjs-pino) | Global; async config via `ConfigEnvService` |
+| `AppModule` | `AppLoggerModule` | Thin wrapper; Pino HTTP logging |
+| `AppLoggerModule` | `LoggerModule` (nestjs-pino) | `forRootAsync` + re-export; factory uses `ConfigEnvService` |
+| `AppLoggerModule` | `ConfigEnvModule` | Injects `ConfigEnvService` for logger factory |
 | `AppModule` | `RedisModule` | Global; provides `REDIS_CLIENT` (ioredis) |
-| `AppModule` | `ThrottlerModule` | Global; backed by Redis via `ThrottlerStorageRedisService` |
+| `AppModule` | `AppThrottlerModule` | Thin wrapper; rate limiting backed by Redis |
+| `AppThrottlerModule` | `ThrottlerModule` (`@nestjs/throttler`) | `forRootAsync` + re-export; Redis storage |
+| `AppThrottlerModule` | `RedisModule` | Injects `REDIS_CLIENT` for `ThrottlerStorageRedisService` |
 | `AppModule` | `PrismaModule` | Global; provides `PrismaService` |
 | `AppModule` | `HealthModule` | Feature module |
 | `AppModule` | `AppMetadataModule` | Feature module; exports `AppMetadataService` |
-| `HealthModule` | `PrismaModule` | Via global provider — `PrismaService` |
-| `HealthModule` | `RedisModule` | Via global provider — `REDIS_CLIENT` |
+| `PrismaModule` | `HealthModule` | Imports to obtain `HealthCheckRegistry`; registers `DatabaseHealthCheckProvider` on init |
+| `RedisModule` | `HealthModule` | Imports to obtain `HealthCheckRegistry`; registers `RedisHealthCheckProvider` on init |
 | `AppMetadataModule` | `PrismaModule` | Via global provider — `PrismaService` |
 
 ## Nest modules → external systems
 
 | Module | External system | Purpose |
 |--------|----------------|---------|
-| `PrismaModule` | PostgreSQL | Prisma Client (all domain/app-metadata reads + writes) |
-| `RedisModule` | Redis | ioredis client shared with ThrottlerModule for rate-limit counters |
-| `HealthModule` | PostgreSQL | `SELECT 1` liveness probe via `PrismaService` |
-| `HealthModule` | Redis | `PING` liveness probe via `REDIS_CLIENT` |
+| `PrismaModule` | PostgreSQL | Prisma Client (all domain/app-metadata reads + writes); `SELECT 1` health probe via `DatabaseHealthCheckProvider` |
+| `RedisModule` | Redis | ioredis client shared with ThrottlerModule for rate-limit counters; `PING` health probe via `RedisHealthCheckProvider` |
 
 ## Redis key patterns
 

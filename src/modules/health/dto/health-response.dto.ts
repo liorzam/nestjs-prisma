@@ -6,14 +6,13 @@ export interface HealthDependencyCheckDto {
   latencyMs: number
   /** Present when status is down; short reason for operators */
   error?: string
+  isCritical: boolean
 }
 
 export interface HealthResponseDto {
   /** ok: all dependencies up; degraded: some down; unhealthy: all down */
   status: 'ok' | 'degraded' | 'unhealthy'
   timestamp: string
-  checks: {
-    database: HealthDependencyCheckDto
-    redis: HealthDependencyCheckDto
-  }
+  /** Dynamic map of check name to result. Keyed by provider name (e.g., 'database', 'redis', 'kafka'). */
+  checks: Record<string, HealthDependencyCheckDto>
 }

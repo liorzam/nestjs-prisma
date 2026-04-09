@@ -7,6 +7,14 @@ import type { AppEnv } from './app-env.interface'
 export class ConfigEnvService {
   constructor(private readonly config: ConfigService<AppEnv, true>) {}
 
+  get isProduction(): boolean {
+    return this.nodeEnv === 'production'
+  }
+
+  getOrThrow<T extends keyof AppEnv>(key: T): AppEnv[T] {
+    return this.config.getOrThrow(key, { infer: true }) as AppEnv[T]
+  }
+
   get nodeEnv(): AppEnv['nodeEnv'] {
     return this.config.getOrThrow('nodeEnv', { infer: true })
   }
@@ -25,16 +33,5 @@ export class ConfigEnvService {
 
   get trustedProxies(): AppEnv['trustedProxies'] {
     return this.config.get('trustedProxies', { infer: true })
-  }
-
-  /** Immutable snapshot of all typed env-backed config */
-  getAll(): Readonly<AppEnv> {
-    return {
-      nodeEnv: this.nodeEnv,
-      port: this.port,
-      databaseUrl: this.databaseUrl,
-      redisUrl: this.redisUrl,
-      trustedProxies: this.trustedProxies,
-    }
   }
 }

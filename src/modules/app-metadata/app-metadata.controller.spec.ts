@@ -1,5 +1,5 @@
-import { NotFoundException } from '@nestjs/common'
 import type { INestApplication } from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as request from 'supertest'
 
@@ -103,9 +103,7 @@ describe('AppMetadataController', () => {
     it('passes the key from the URL param to the service', async () => {
       upsert.mockResolvedValue({ ...sampleEntry, key: 'other.key' })
 
-      await request(app.getHttpServer())
-        .put('/app-metadata/other.key')
-        .send({ value: {} })
+      await request(app.getHttpServer()).put('/app-metadata/other.key').send({ value: {} })
 
       expect(upsert).toHaveBeenCalledWith('other.key', {})
     })

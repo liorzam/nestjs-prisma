@@ -106,7 +106,7 @@ Use `@IsObject()` in the DTO when the expected shape is a plain object. Avoid `@
 1. HTTP → Controller (thin: delegate only).
 2. `ValidationPipe` strips unknown fields, instantiates DTO class, coerces types.
 3. Service → Prisma (or domain helpers) → structured logs with correlation ID.
-4. `AllExceptionsFilter` catches unhandled errors and serializes them with `correlationId`.
+4. `AllExceptionsFilter` catches unhandled errors: `HttpException` keeps its status and body shape; other errors return 500 — in production the JSON includes `errorId` and safe tracing fields only, while non-production responses add `error`, `message`, and `stack` for debugging.
 
 ## AppMetadata module (key-value store in PostgreSQL)
 

@@ -247,10 +247,7 @@ describe('App (e2e)', () => {
     })
 
     it('DELETE /app-metadata/:key returns 204 and removes the entry', async () => {
-      await request(app.getHttpServer())
-        .put(`/app-metadata/${KEY}`)
-        .send({ value: {} })
-        .expect(200)
+      await request(app.getHttpServer()).put(`/app-metadata/${KEY}`).send({ value: {} }).expect(200)
 
       const del = await request(app.getHttpServer()).delete(`/app-metadata/${KEY}`)
       expect(del.status).toBe(204)
